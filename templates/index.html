@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRE - Grupo Nordestão</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Alerta Parcial */
+        .alert-parcial {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .alert-parcial .alert-icon {
+            font-size: 24px;
+        }
+
+        .alert-parcial .alert-content {
+            flex: 1;
+        }
+
+        .alert-parcial .alert-title {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .alert-parcial .alert-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .alert-parcial .alert-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .header-top {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-info h1 {
+            color: var(--white);
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-info p {
+            color: var(--gray-300);
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        /* Controles */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-label {
+            color: var(--gray-400);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-select {
+            padding: 10px 40px 10px 16px;
+            border-radius: var(--radius-sm);
+            border: 2px solid transparent;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--white);
+            color: var(--gray-900);
+            cursor: pointer;
+            min-width: 160px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .control-select:hover {
+            border-color: var(--accent);
+        }
+
+        .control-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Toggle Tipo */
+        .tipo-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .tipo-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--gray-300);
+        }
+
+        .tipo-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .tipo-btn.active {
+            background: var(--white);
+            color: var(--gray-900);
+        }
+
+        .tipo-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .tipo-btn.parcial-active {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        /* Header Info Bar */
+        .header-info {
+            padding: 16px 32px;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .store-details {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .store-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .store-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-varejo {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-atacado {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .store-name h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        /* KPIs Grid */
+        .kpis-section {
+            margin-bottom: 24px;
+        }
+
+        .kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--gray-300);
+            transition: all 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .kpi-card.positive { border-left-color: var(--success); }
+        .kpi-card.negative { border-left-color: var(--danger); }
+        .kpi-card.highlight { border-left-color: var(--accent); }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .kpi-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .kpi-icon.green { background: var(--success-light); }
+        .kpi-icon.red { background: var(--danger-light); }
+        .kpi-icon.blue { background: #dbeafe; }
+
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .kpi-unit {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-400);
+        }
+
+        .kpi-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .kpi-change.up {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .kpi-change.down {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Margins Row */
+        .margins-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .margin-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .margin-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .margin-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .margin-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .margin-bar {
+            width: 80px;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .margin-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .margin-fill.green { background: var(--success); }
+        .margin-fill.red { background: var(--danger); }
+
+        /* Table Section */
+        .table-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-title h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .table-title .unit-badge {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* Table */
+        .table-scroll {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+
+        .dre-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .dre-table thead {
+            background: var(--gray-50);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .dre-table th {
+            padding: 14px 12px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--gray-500);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .dre-table th:first-child {
+            text-align: left;
+            padding-left: 24px;
+            width: 280px;
+        }
+
+        .dre-table td {
+            padding: 10px 12px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-100);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .dre-table td:first-child {
+            text-align: left;
+            padding-left: 24px;
+        }
+
+        /* Row Types */
+        .row-principal {
+            background: var(--gray-50);
+            font-weight: 600;
+        }
+
+        .row-principal td:first-child {
+            color: var(--primary);
+        }
+
+        .row-total {
+            background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-50) 100%);
+            font-weight: 700;
+        }
+
+        .row-total td {
+            border-top: 2px solid var(--gray-300);
+            border-bottom: 2px solid var(--gray-300);
+            padding: 14px 12px;
+        }
+
+        .row-total td:first-child {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .row-resultado {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .row-resultado td {
+            color: var(--white) !important;
+            font-weight: 700;
+            padding: 16px 12px;
+            font-size: 14px;
+        }
+
+        .row-subconta {
+            background: var(--white);
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .row-subconta td:first-child {
+            padding-left: 48px;
+        }
+
+        .row-subconta.hidden {
+            display: none;
+        }
+
+        /* Expandable */
+        .expandable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .expandable:hover {
+            background: var(--gray-100);
+        }
+
+        .expand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 10px;
+            margin-right: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        /* Values */
+        .value-negative { color: var(--danger); }
+
+        .percent-cell {
+            font-size: 11px;
+            color: var(--gray-400);
+        }
+
+        .var-cell {
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .var-positive {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .var-negative {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Erro */
+        .erro-container {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .erro-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .erro-titulo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .erro-texto {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-500);
+            font-size: 12px;
+        }
+
+        .footer-tip {
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .margins-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .brand {
+                justify-content: center;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .control-select {
+                width: 100%;
+            }
+            
+            .header-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .store-details, .meta-info {
+                justify-content: center;
+            }
+            
+            .meta-item {
+                align-items: center;
+            }
+            
+            .kpis-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .tipo-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Print */
+        @media print {
+            .table-actions, .header-controls, .alert-parcial { display: none; }
+            .table-scroll { max-height: none; overflow: visible; }
+            .row-subconta.hidden { display: table-row; }
+            .header-top, .row-resultado { 
+                print-color-adjust: exact; 
+                -webkit-print-color-adjust: exact; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        {% if dre and dre.tipo_arquivo == 'parcial' %}
+        <!-- Alerta de Dados Parciais -->
+        <div class="alert-parcial">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+                <div class="alert-title">Dados Parciais</div>
+                <div class="alert-text">Este relatório contém dados parciais do período, atualizados semanalmente até o fechamento do mês.</div>
+            </div>
+            <span class="alert-badge">Atualizado em {{ dre.data_ref }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-logo"><img src="static/logo.png" alt="Logo Nordestão"></div>
+                    <div class="brand-info">
+                        <h1>Grupo Nordestão</h1>
+                        <p>Demonstração do Resultado do Exercício</p>
+                    </div>
+                </div>
+                
+                <div class="header-controls">
+                    <!-- Seletor de Período -->
+                    {% if periodos.todos %}
+                    <div class="control-group">
+                        <span class="control-label">📅 Período</span>
+                        <select id="periodo-select" class="control-select" onchange="mudarPeriodo()">
+                            {% for p in periodos.todos %}
+                            <option value="{{ p.label }}" 
+                                    data-tem-consolidado="{{ p.tem_consolidado|lower }}"
+                                    data-tem-parcial="{{ p.tem_parcial|lower }}"
+                                    {% if periodo_selecionado == p.label %}selected{% endif %}>
+                                {{ p.mes_nome }}/{{ p.ano }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <!-- Toggle Consolidado/Parcial -->
+                    <div class="control-group">
+                        <span class="control-label">📊 Tipo</span>
+                        <div class="tipo-toggle">
+                            <button type="button" 
+                                    id="btn-consolidado" 
+                                    class="tipo-btn {% if tipo_selecionado == 'consolidado' %}active{% endif %}"
+                                    onclick="mudarTipo('consolidado')">
+                                Consolidado
+                            </button>
+                            <button type="button" 
+                                    id="btn-parcial" 
+                                    class="tipo-btn {% if tipo_selecionado == 'parcial' %}active parcial-active{% endif %}"
+                                    onclick="mudarTipo('parcial')">
+                                Parcial
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Seletor de Loja -->
+                    {% if lojas.todas|length > 0 %}
+                    <div class="control-group">
+                        <span class="control-label">🏪 Unidade</span>
+                        <select id="loja-select" class="control-select" onchange="mudarLoja()">
+                            {% if lojas.varejo %}
+                            <optgroup label="🛒 VAREJO - NORDESTÃO">
+                                {% for loja in lojas.varejo %}
+                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id or (not loja_selecionada and loop.first) %}selected{% endif %}>
+                                    {{ loja.nome }}
+                                </option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endif %}
+                            {% if lojas.atacado %}
+                            <optgroup label="📦 ATACADO - SUPERFÁCIL">
+                                {% for loja in lojas.atacado %}
+                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                    {{ loja.nome }}
+                                </option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endif %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if dre %}
+            <div class="header-info">
+                <div class="store-details">
+                    <div class="store-name">
+                        <span class="store-badge {% if dre.tipo_loja == 'atacado' %}badge-atacado{% else %}badge-varejo{% endif %}">
+                            {{ 'Atacado' if dre.tipo_loja == 'atacado' else 'Varejo' }}
+                        </span>
+                        <h2>{{ dre.loja }}</h2>
+                    </div>
+                </div>
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <span class="meta-label">Referência</span>
+                        <span class="meta-value">{{ dre.data_ref if dre.data_ref else 'N/A' }}</span>
+                    </div>
+                    {% if dre.indicadores.func_atual %}
+                    <div class="meta-item">
+                        <span class="meta-label">Funcionários</span>
+                        <span class="meta-value">{{ dre.indicadores.func_atual|int }}</span>
+                    </div>
+                    {% endif %}
+                    {% if dre.indicadores.cupons_atual %}
+                    <div class="meta-item">
+                        <span class="meta-label">Cupons/Mês</span>
+                        <span class="meta-value">{{ "{:,.0f}".format(dre.indicadores.cupons_atual).replace(',', '.') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </header>
+
+        {% if erro %}
+        <!-- Mensagem de Erro -->
+        <div class="erro-container">
+            <div class="erro-icon">📁</div>
+            <div class="erro-titulo">Nenhum dado encontrado</div>
+            <div class="erro-texto">{{ erro }}</div>
+        </div>
+        {% elif dre %}
+        <!-- KPIs -->
+        <section class="kpis-section">
+            <div class="kpis-grid">
+                <div class="kpi-card highlight">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Receita Líquida</span>
+                        <div class="kpi-icon blue">📈</div>
+                    </div>
+                    <div class="kpi-value">
+                        R$ {{ "{:,.2f}".format(dre.kpis.receita_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                        <span class="kpi-unit">mm</span>
+                    </div>
+                    <span class="kpi-change {% if dre.kpis.receita_var > 0 %}up{% else %}down{% endif %}">
+                        {% if dre.kpis.receita_var > 0 %}↑{% else %}↓{% endif %}
+                        {{ "{:.1%}".format(dre.kpis.receita_var|abs) }} vs {{ dre.ano_anterior }}
+                    </span>
+                </div>
+                
+                <div class="kpi-card {% if dre.kpis.lucro_bruto_atual > 0 %}positive{% else %}negative{% endif %}">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Lucro Bruto</span>
+                        <div class="kpi-icon {% if dre.kpis.lucro_bruto_atual > 0 %}green{% else %}red{% endif %}">💰</div>
+                    </div>
+                    <div class="kpi-value">
+                        R$ {{ "{:,.2f}".format(dre.kpis.lucro_bruto_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                        <span class="kpi-unit">mm</span>
+                    </div>
+                    <span class="kpi-change {% if dre.kpis.lucro_bruto_var > 0 %}up{% else %}down{% endif %}">
+                        {% if dre.kpis.lucro_bruto_var > 0 %}↑{% else %}↓{% endif %}
+                        {{ "{:.1%}".format(dre.kpis.lucro_bruto_var|abs) }} vs {{ dre.ano_anterior }}
+                    </span>
+                </div>
+                
+                <div class="kpi-card {% if dre.kpis.lucro_op_atual > 0 %}positive{% else %}negative{% endif %}">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Lucro Operacional</span>
+                        <div class="kpi-icon {% if dre.kpis.lucro_op_atual > 0 %}green{% else %}red{% endif %}">📊</div>
+                    </div>
+                    <div class="kpi-value">
+                        R$ {{ "{:,.2f}".format(dre.kpis.lucro_op_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                        <span class="kpi-unit">mm</span>
+                    </div>
+                    <span class="kpi-change {% if dre.kpis.lucro_op_var > 0 %}up{% else %}down{% endif %}">
+                        {% if dre.kpis.lucro_op_var > 0 %}↑{% else %}↓{% endif %}
+                        {{ "{:.1%}".format(dre.kpis.lucro_op_var|abs) }} vs {{ dre.ano_anterior }}
+                    </span>
+                </div>
+                
+                <div class="kpi-card {% if dre.kpis.lucro_final_atual > 0 %}positive{% else %}negative{% endif %}">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Lucro Antes IR</span>
+                        <div class="kpi-icon {% if dre.kpis.lucro_final_atual > 0 %}green{% else %}red{% endif %}">🎯</div>
+                    </div>
+                    <div class="kpi-value">
+                        R$ {{ "{:,.2f}".format(dre.kpis.lucro_final_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                        <span class="kpi-unit">mm</span>
+                    </div>
+                    <span class="kpi-change {% if dre.kpis.lucro_final_var > 0 %}up{% else %}down{% endif %}">
+                        {% if dre.kpis.lucro_final_var > 0 %}↑{% else %}↓{% endif %}
+                        {{ "{:.1%}".format(dre.kpis.lucro_final_var|abs) }} vs Orç.
+                    </span>
+                </div>
+                
+                {% if dre.indicadores.ticket_atual %}
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Ticket Médio</span>
+                        <div class="kpi-icon blue">🧾</div>
+                    </div>
+                    <div class="kpi-value">
+                        R$ {{ "{:,.2f}".format(dre.indicadores.ticket_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                    </div>
+                    {% set ticket_var = (dre.indicadores.ticket_atual - dre.indicadores.ticket_anterior) / dre.indicadores.ticket_anterior if dre.indicadores.ticket_anterior else 0 %}
+                    <span class="kpi-change {% if ticket_var > 0 %}up{% else %}down{% endif %}">
+                        {% if ticket_var > 0 %}↑{% else %}↓{% endif %}
+                        {{ "{:.1%}".format(ticket_var|abs) }} vs {{ dre.ano_anterior }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Margins -->
+            <div class="margins-row">
+                <div class="margin-card">
+                    <div class="margin-info">
+                        <span class="margin-label">Margem Bruta</span>
+                        <span class="margin-value">{{ "{:.1f}".format(dre.kpis.margem_bruta).replace('.', ',') }}%</span>
+                    </div>
+                    <div class="margin-bar">
+                        <div class="margin-fill {% if dre.kpis.margem_bruta > 20 %}green{% elif dre.kpis.margem_bruta < 10 %}red{% endif %}" 
+                             style="width: {{ [dre.kpis.margem_bruta, 100]|min }}%"></div>
+                    </div>
+                </div>
+                <div class="margin-card">
+                    <div class="margin-info">
+                        <span class="margin-label">Margem Operacional</span>
+                        <span class="margin-value">{{ "{:.1f}".format(dre.kpis.margem_op).replace('.', ',') }}%</span>
+                    </div>
+                    <div class="margin-bar">
+                        <div class="margin-fill {% if dre.kpis.margem_op > 5 %}green{% elif dre.kpis.margem_op < 0 %}red{% endif %}" 
+                             style="width: {{ [dre.kpis.margem_op|abs, 100]|min }}%"></div>
+                    </div>
+                </div>
+                <div class="margin-card">
+                    <div class="margin-info">
+                        <span class="margin-label">Margem Líquida</span>
+                        <span class="margin-value">{{ "{:.1f}".format(dre.kpis.margem_liquida).replace('.', ',') }}%</span>
+                    </div>
+                    <div class="margin-bar">
+                        <div class="margin-fill {% if dre.kpis.margem_liquida > 2 %}green{% elif dre.kpis.margem_liquida < 0 %}red{% endif %}" 
+                             style="width: {{ [dre.kpis.margem_liquida|abs * 5, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DRE Table -->
+        <section class="table-section">
+            <div class="table-header">
+                <div class="table-title">
+                    <h3>Demonstrativo Analítico</h3>
+                    <span class="unit-badge">Valores em R$ milhões (mm)</span>
+                </div>
+                <div class="table-actions">
+                    <button class="btn btn-primary" onclick="expandAll()">
+                        <span>📂</span> Expandir
+                    </button>
+                    <button class="btn btn-secondary" onclick="collapseAll()">
+                        <span>📁</span> Recolher
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        <span>🖨️</span> Imprimir
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-scroll">
+                <table class="dre-table">
+                    <thead>
+                        <tr>
+                            <th>Conta</th>
+                            <th>Real {{ dre.ano_anterior }}</th>
+                            <th>% Sobre Fat.</th>
+                            <th>Orçamento</th>
+                            <th>% Sobre Fat.</th>
+                            <th>Real {{ dre.ano_atual }}</th>
+                            <th>% Sobre Fat.</th>
+                            <th>Orç x Real</th>
+                            <th>{{ dre.ano_atual }} x {{ dre.ano_anterior }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in dre.dados %}
+                        {% set row_class = '' %}
+                        {% if item.tipo == 'total' or item.tipo == 'subtotal' %}
+                            {% set row_class = 'row-total' %}
+                        {% elif item.tipo == 'resultado' %}
+                            {% set row_class = 'row-resultado' %}
+                        {% elif item.is_principal %}
+                            {% set row_class = 'row-principal' %}
+                        {% else %}
+                            {% set row_class = 'row-subconta hidden' %}
+                        {% endif %}
+                        
+                        <tr class="{{ row_class }} {% if item.expansivel %}expandable{% endif %}" 
+                            data-conta="{{ item.conta }}"
+                            {% if item.conta_pai %}data-parent="{{ item.conta_pai }}"{% endif %}>
+                            <td>
+                                {% if item.expansivel %}
+                                <span class="expand-icon">▶</span>
+                                {% endif %}
+                                {{ item.conta }}
+                            </td>
+                            <td class="{% if item.real_anterior < 0 %}value-negative{% endif %}">
+                                {{ "{:,.2f}".format(item.real_anterior).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                            </td>
+                            <td class="percent-cell">{{ "{:.1%}".format(item.perc_anterior) }}</td>
+                            <td>
+                                {{ "{:,.2f}".format(item.orcamento).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                            </td>
+                            <td class="percent-cell">{{ "{:.1%}".format(item.perc_orc) }}</td>
+                            <td class="{% if item.real_atual < 0 %}value-negative{% endif %}">
+                                <strong>{{ "{:,.2f}".format(item.real_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong>
+                            </td>
+                            <td class="percent-cell">{{ "{:.1%}".format(item.perc_atual) }}</td>
+                            <td>
+                                {% set nome_lower = item.conta|lower %}
+                                {% set is_receita = item.tipo in ['receita', 'total', 'resultado'] or 'receita' in nome_lower or 'lucro' in nome_lower or 'recomposição' in nome_lower %}
+                                {% set is_good_orc = (is_receita and item.var_orc_real > 0) or (not is_receita and item.var_orc_real < 0) %}
+                                <span class="var-cell {% if is_good_orc %}var-positive{% else %}var-negative{% endif %}">
+                                    {{ "{:.1%}".format(item.var_orc_real) }}
+                                </span>
+                            </td>
+                            <td>
+                                {% set is_good_ano = (is_receita and item.var_ano > 0) or (not is_receita and item.var_ano < 0) %}
+                                <span class="var-cell {% if is_good_ano %}var-positive{% else %}var-negative{% endif %}">
+                                    {{ "{:.1%}".format(item.var_ano) }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+
+        <footer class="footer">
+            <div class="footer-tip">💡 Clique nas linhas com ▶ para expandir detalhes • Ctrl+E expandir tudo • Ctrl+R recolher</div>
+            <p>Grupo Nordestão — Sistema de Gestão Financeira</p>
+        </footer>
+    </div>
+
+    <script>
+        // Atualizar disponibilidade dos botões baseado no período selecionado
+        function atualizarBotoesTipo() {
+            const periodoSelect = document.getElementById('periodo-select');
+            if (!periodoSelect) return;
+            
+            const option = periodoSelect.options[periodoSelect.selectedIndex];
+            const temConsolidado = option.dataset.temConsolidado === 'true';
+            const temParcial = option.dataset.temParcial === 'true';
+            
+            const btnConsolidado = document.getElementById('btn-consolidado');
+            const btnParcial = document.getElementById('btn-parcial');
+            
+            if (btnConsolidado) btnConsolidado.disabled = !temConsolidado;
+            if (btnParcial) btnParcial.disabled = !temParcial;
+        }
+
+        function mudarPeriodo() {
+            atualizarBotoesTipo();
+            atualizarURL();
+        }
+
+        function mudarTipo(tipo) {
+            const btnConsolidado = document.getElementById('btn-consolidado');
+            const btnParcial = document.getElementById('btn-parcial');
+            
+            btnConsolidado.classList.remove('active');
+            btnParcial.classList.remove('active', 'parcial-active');
+            
+            if (tipo === 'consolidado') {
+                btnConsolidado.classList.add('active');
+            } else {
+                btnParcial.classList.add('active', 'parcial-active');
+            }
+            
+            atualizarURL();
+        }
+
+        function mudarLoja() {
+            atualizarURL();
+        }
+
+        function atualizarURL() {
+            const periodo = document.getElementById('periodo-select')?.value || '';
+            const loja = document.getElementById('loja-select')?.value || '';
+            const btnParcial = document.getElementById('btn-parcial');
+            const tipo = btnParcial?.classList.contains('active') ? 'parcial' : 'consolidado';
+            
+            let url = '/?';
+            if (periodo) url += `periodo=${encodeURIComponent(periodo)}&`;
+            url += `tipo=${tipo}&`;
+            if (loja) url += `loja=${encodeURIComponent(loja)}`;
+            
+            window.location.href = url;
+        }
+
+        // Expandir/Recolher tabela
+        document.querySelectorAll('.expandable').forEach(row => {
+            row.addEventListener('click', function() {
+                const conta = this.dataset.conta;
+                const isExpanded = this.classList.contains('expanded');
+                this.classList.toggle('expanded');
+                document.querySelectorAll(`[data-parent="${conta}"]`).forEach(subconta => {
+                    subconta.classList.toggle('hidden', isExpanded);
+                });
+            });
+        });
+
+        function expandAll() {
+            document.querySelectorAll('.expandable').forEach(row => row.classList.add('expanded'));
+            document.querySelectorAll('.row-subconta').forEach(row => row.classList.remove('hidden'));
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.expandable').forEach(row => row.classList.remove('expanded'));
+            document.querySelectorAll('.row-subconta').forEach(row => row.classList.add('hidden'));
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'e' && e.ctrlKey) { e.preventDefault(); expandAll(); }
+            if (e.key === 'r' && e.ctrlKey) { e.preventDefault(); collapseAll(); }
+        });
+
+        // Inicializar
+        atualizarBotoesTipo();
+    </script>
+</body>
+</html>
