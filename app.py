@@ -8,9 +8,13 @@ import pandas as pd
 from flask import Flask, render_template, jsonify, request
 import os
 import re
+import logging
+import traceback
 from datetime import datetime
 from glob import glob
 from functools import lru_cache
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
@@ -236,7 +240,7 @@ def obter_arquivo(periodo_label, tipo='consolidado'):
 
 def listar_lojas(excel_path):
     """Usa o Excel em cache para listar lojas."""
-    df = ler_excel_cached(excel_path)
+    df = ler_excel_cached(excel_path).copy()
 
     data_ref_raw = df.iloc[3, 3]
     if isinstance(data_ref_raw, (pd.Timestamp, datetime)):
@@ -276,7 +280,7 @@ def listar_lojas(excel_path):
 
 def carregar_dre(excel_path, col_inicio=None):
     """Usa o Excel em cache para carregar o DRE. Não relê o arquivo do disco."""
-    df = ler_excel_cached(excel_path)
+    df = ler_excel_cached(excel_path).copy()
 
     lojas = listar_lojas(excel_path)
 
@@ -417,59 +421,64 @@ def carregar_dre(excel_path, col_inicio=None):
 
 @app.route('/')
 def index():
-    periodo = request.args.get('periodo')
-    tipo = request.args.get('tipo', 'consolidado')
-    loja_id = request.args.get('loja')
+    try:
+        periodo = request.args.get('periodo')
+        tipo = request.args.get('tipo', 'consolidado')
+        loja_id = request.args.get('loja')
 
-    periodos = listar_periodos()
+        periodos = listar_periodos()
 
-    if not periodo and periodos['todos']:
-        periodo = periodos['todos'][0]['label']
+        if not periodo and periodos['todos']:
+            periodo = periodos['todos'][0]['label']
 
-    if periodo:
-        periodo_info = next((p for p in periodos['todos'] if p['label'] == periodo), None)
-        if periodo_info:
-            if tipo == 'parcial' and not periodo_info['tem_parcial']:
-                tipo = 'consolidado'
-            elif tipo == 'consolidado' and not periodo_info['tem_consolidado']:
-                tipo = 'parcial'
+        if periodo:
+            periodo_info = next((p for p in periodos['todos'] if p['label'] == periodo), None)
+            if periodo_info:
+                if tipo == 'parcial' and not periodo_info['tem_parcial']:
+                    tipo = 'consolidado'
+                elif tipo == 'consolidado' and not periodo_info['tem_consolidado']:
+                    tipo = 'parcial'
 
-    excel_path = obter_arquivo(periodo, tipo) if periodo else None
+        excel_path = obter_arquivo(periodo, tipo) if periodo else None
 
-    if not excel_path:
+        if not excel_path:
+            return render_template('index.html',
+                                 dre=None,
+                                 lojas={'varejo': [], 'atacado': [], 'todas': []},
+                                 periodos=periodos,
+                                 periodo_selecionado=periodo,
+                                 tipo_selecionado=tipo,
+                                 loja_selecionada=None,
+                                 erro="Nenhum arquivo DRE encontrado. Adicione arquivos nas pastas 'consolidado' ou 'parcial'.")
+
+        col_inicio = int(loja_id) if loja_id else None
+        dre_data = carregar_dre(excel_path, col_inicio)
+
+        if not dre_data:
+            return render_template('index.html',
+                                 dre=None,
+                                 lojas={'varejo': [], 'atacado': [], 'todas': []},
+                                 periodos=periodos,
+                                 periodo_selecionado=periodo,
+                                 tipo_selecionado=tipo,
+                                 loja_selecionada=None,
+                                 erro="Erro ao carregar dados do DRE.")
+
+        dre_data['periodo'] = periodo
+        dre_data['tipo_arquivo'] = tipo
+
         return render_template('index.html',
-                             dre=None,
-                             lojas={'varejo': [], 'atacado': [], 'todas': []},
+                             dre=dre_data,
+                             lojas=dre_data['lojas'],
                              periodos=periodos,
                              periodo_selecionado=periodo,
                              tipo_selecionado=tipo,
-                             loja_selecionada=None,
-                             erro="Nenhum arquivo DRE encontrado. Adicione arquivos nas pastas 'consolidado' ou 'parcial'.")
+                             loja_selecionada=loja_id,
+                             erro=None)
 
-    col_inicio = int(loja_id) if loja_id else None
-    dre_data = carregar_dre(excel_path, col_inicio)
-
-    if not dre_data:
-        return render_template('index.html',
-                             dre=None,
-                             lojas={'varejo': [], 'atacado': [], 'todas': []},
-                             periodos=periodos,
-                             periodo_selecionado=periodo,
-                             tipo_selecionado=tipo,
-                             loja_selecionada=None,
-                             erro="Erro ao carregar dados do DRE.")
-
-    dre_data['periodo'] = periodo
-    dre_data['tipo_arquivo'] = tipo
-
-    return render_template('index.html',
-                         dre=dre_data,
-                         lojas=dre_data['lojas'],
-                         periodos=periodos,
-                         periodo_selecionado=periodo,
-                         tipo_selecionado=tipo,
-                         loja_selecionada=loja_id,
-                         erro=None)
+    except Exception as e:
+        logging.error("ERRO NA ROTA /: %s", traceback.format_exc())
+        return f"<h2>Erro interno</h2><pre>{traceback.format_exc()}</pre>", 500
 
 
 @app.route('/api/periodos')
