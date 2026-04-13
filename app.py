@@ -433,17 +433,35 @@ def carregar_dre(excel_path, col_inicio=None):
         'lucro_final_atual': lucro_final.get('real_2025', 0),
     }
 
+    # ── Anos dinâmicos: extraídos do nome do arquivo ──
+    # Ex: DRE_LOJAS_FEV26.xlsx → ano_atual=2026, ano_anterior=2025
+    # Ex: DRE_LOJAS_NOV25.xlsx → ano_atual=2025, ano_anterior=2024
+    periodo_info = extrair_periodo_arquivo(os.path.basename(excel_path))
+    if periodo_info:
+        ano_num          = int('20' + periodo_info['ano'])
+        ano_atual_str    = str(ano_num)
+        ano_anterior_str = str(ano_num - 1)
+        mes_nome_atual   = periodo_info['mes_nome']
+        mes_abrev_atual  = periodo_info['mes_abrev']
+    else:
+        ano_atual_str    = '2025'
+        ano_anterior_str = '2024'
+        mes_nome_atual   = ''
+        mes_abrev_atual  = ''
+
     return {
-        'data_ref':    data_ref,
-        'loja':        loja_nome if pd.notna(loja_nome) else '',
-        'tipo_loja':   tipo_loja,
-        'col_inicio':  col_inicio,
-        'dados':       dados,
-        'indicadores': indicadores,
-        'kpis':        kpis,
-        'lojas':       lojas,
-        'ano_atual':   '2025',
-        'ano_anterior':'2024',
+        'data_ref':       data_ref,
+        'loja':           loja_nome if pd.notna(loja_nome) else '',
+        'tipo_loja':      tipo_loja,
+        'col_inicio':     col_inicio,
+        'dados':          dados,
+        'indicadores':    indicadores,
+        'kpis':           kpis,
+        'lojas':          lojas,
+        'ano_atual':      ano_atual_str,
+        'ano_anterior':   ano_anterior_str,
+        'mes_nome_atual': mes_nome_atual,
+        'mes_abrev_atual': mes_abrev_atual,
     }
 
 
