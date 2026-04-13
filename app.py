@@ -39,7 +39,7 @@ MESES_NOME = {
 
 CONTAS_PRINCIPAIS = [
     'Receita bruta de vendas',
-    'Desc. / Canc. e Devoluções S/ Vendas', 
+    'Desc. / Canc. e Devoluções S/ Vendas',
     'Receita de vendas',
     'Receita bruta de serviços',
     'Impostos e devoluções sobre vendas',
@@ -107,6 +107,7 @@ ESTRUTURA_DRE = {
     'LUCRO ANTES IMPOSTOS': {'nivel': 0, 'tipo': 'resultado', 'expansivel': False},
 }
 
+
 # ─────────────────────────────────────────────
 # CACHE: lê cada arquivo Excel apenas uma vez
 # ─────────────────────────────────────────────
@@ -171,6 +172,7 @@ def extrair_periodo_arquivo(nome_arquivo):
         }
     return None
 
+
 # ─────────────────────────────────────────────
 # CACHE: lista de períodos (glob no disco)
 # ─────────────────────────────────────────────
@@ -221,8 +223,8 @@ def listar_periodos():
             todos_periodos[p['label']]['tem_parcial'] = True
 
     periodos['todos'] = sorted(todos_periodos.values(), key=lambda x: x['sort_key'], reverse=True)
-
     return periodos
+
 
 def obter_arquivo(periodo_label, tipo='consolidado'):
     diretorio = CONSOLIDADO_DIR if tipo == 'consolidado' else PARCIAL_DIR
@@ -237,6 +239,7 @@ def obter_arquivo(periodo_label, tipo='consolidado'):
             return arquivo
 
     return None
+
 
 def listar_lojas(excel_path):
     """Usa o Excel em cache para listar lojas."""
@@ -278,6 +281,7 @@ def listar_lojas(excel_path):
         'data_ref': data_ref
     }
 
+
 def carregar_dre(excel_path, col_inicio=None):
     """Usa o Excel em cache para carregar o DRE. Não relê o arquivo do disco."""
     df = ler_excel_cached(excel_path).copy()
@@ -306,12 +310,12 @@ def carregar_dre(excel_path, col_inicio=None):
     col_real_2024 = col_inicio
     col_perc_2024 = col_inicio + 1
     col_orcamento = col_inicio + 2
-    col_perc_orc = col_inicio + 3
+    col_perc_orc  = col_inicio + 3
     col_real_2025 = col_inicio + 4
     col_perc_2025 = col_inicio + 5
-    col_var_orc = col_inicio + 6
-    col_var_24 = col_inicio + 7
-    col_contas = 3
+    col_var_orc   = col_inicio + 6
+    col_var_24    = col_inicio + 7
+    col_contas    = 3
 
     dados = []
     conta_pai = None
@@ -346,19 +350,26 @@ def carregar_dre(excel_path, col_inicio=None):
 
         item = {
             'conta': conta_str,
-            'real_2024': safe_float(row[col_real_2024]),
-            'perc_2024': safe_float(row[col_perc_2024]),
-            'orcamento': safe_float(row[col_orcamento]),
-            'perc_orc': safe_float(row[col_perc_orc]),
-            'real_2025': safe_float(row[col_real_2025]),
-            'perc_2025': safe_float(row[col_perc_2025]),
-            'var_orc_real': safe_float(row[col_var_orc]),
-            'var_25_24': safe_float(row[col_var_24]),
+            # Valores originais
+            'real_2024':   safe_float(row[col_real_2024]),
+            'perc_2024':   safe_float(row[col_perc_2024]),
+            'orcamento':   safe_float(row[col_orcamento]),
+            'perc_orc':    safe_float(row[col_perc_orc]),
+            'real_2025':   safe_float(row[col_real_2025]),
+            'perc_2025':   safe_float(row[col_perc_2025]),
+            'var_orc_real':safe_float(row[col_var_orc]),
+            'var_25_24':   safe_float(row[col_var_24]),
             'is_principal': is_principal,
-            'nivel': config['nivel'],
-            'tipo': config['tipo'],
-            'expansivel': config['expansivel'] and is_principal,
-            'conta_pai': conta_pai if not is_principal else None
+            'nivel':       config['nivel'],
+            'tipo':        config['tipo'],
+            'expansivel':  config['expansivel'] and is_principal,
+            'conta_pai':   conta_pai if not is_principal else None,
+            # Aliases usados pelo template
+            'real_atual':     safe_float(row[col_real_2025]),
+            'real_anterior':  safe_float(row[col_real_2024]),
+            'perc_atual':     safe_float(row[col_perc_2025]),
+            'perc_anterior':  safe_float(row[col_perc_2024]),
+            'var_ano':        safe_float(row[col_var_24]),
         }
 
         if is_principal:
@@ -383,39 +394,56 @@ def carregar_dre(excel_path, col_inicio=None):
             indicadores['func_2024'] = safe_float(row[col_real_2024])
             indicadores['func_2025'] = safe_float(row[col_real_2025])
 
-    receita = find_conta(dados, 'Receita líquida total')
+    # Aliases de indicadores usados pelo template
+    indicadores['func_atual']      = indicadores.get('func_2025', 0)
+    indicadores['func_anterior']   = indicadores.get('func_2024', 0)
+    indicadores['cupons_atual']    = indicadores.get('cupons_2025', 0)
+    indicadores['cupons_anterior'] = indicadores.get('cupons_2024', 0)
+    indicadores['ticket_atual']    = indicadores.get('ticket_2025', 0)
+    indicadores['ticket_anterior'] = indicadores.get('ticket_2024', 0)
+
+    receita     = find_conta(dados, 'Receita líquida total')
     lucro_bruto = find_conta(dados, 'Lucro bruto')
-    lucro_op = find_conta(dados, 'Lucro Operacional')
+    lucro_op    = find_conta(dados, 'Lucro Operacional')
     lucro_final = find_conta(dados, 'LUCRO ANTES IMPOSTOS')
 
-    margem_bruta = (lucro_bruto.get('real_2025', 0) / receita.get('real_2025', 1)) * 100 if receita.get('real_2025', 0) != 0 else 0
-    margem_op = (lucro_op.get('real_2025', 0) / receita.get('real_2025', 1)) * 100 if receita.get('real_2025', 0) != 0 else 0
+    margem_bruta   = (lucro_bruto.get('real_2025', 0) / receita.get('real_2025', 1)) * 100 if receita.get('real_2025', 0) != 0 else 0
+    margem_op      = (lucro_op.get('real_2025', 0)    / receita.get('real_2025', 1)) * 100 if receita.get('real_2025', 0) != 0 else 0
     margem_liquida = (lucro_final.get('real_2025', 0) / receita.get('real_2025', 1)) * 100 if receita.get('real_2025', 0) != 0 else 0
 
     kpis = {
-        'receita_2025': receita.get('real_2025', 0),
-        'receita_2024': receita.get('real_2024', 0),
-        'receita_var': receita.get('var_25_24', 0),
+        # Chaves originais
+        'receita_2025':     receita.get('real_2025', 0),
+        'receita_2024':     receita.get('real_2024', 0),
+        'receita_var':      receita.get('var_25_24', 0),
         'lucro_bruto_2025': lucro_bruto.get('real_2025', 0),
-        'lucro_bruto_var': lucro_bruto.get('var_25_24', 0),
-        'lucro_op_2025': lucro_op.get('real_2025', 0),
-        'lucro_op_var': lucro_op.get('var_25_24', 0),
+        'lucro_bruto_var':  lucro_bruto.get('var_25_24', 0),
+        'lucro_op_2025':    lucro_op.get('real_2025', 0),
+        'lucro_op_var':     lucro_op.get('var_25_24', 0),
         'lucro_final_2025': lucro_final.get('real_2025', 0),
-        'lucro_final_var': lucro_final.get('var_orc_real', 0),
-        'margem_bruta': margem_bruta,
-        'margem_op': margem_op,
-        'margem_liquida': margem_liquida,
+        'lucro_final_var':  lucro_final.get('var_orc_real', 0),
+        'margem_bruta':     margem_bruta,
+        'margem_op':        margem_op,
+        'margem_liquida':   margem_liquida,
+        # Aliases usados pelo template index.html
+        'receita_atual':     receita.get('real_2025', 0),
+        'receita_anterior':  receita.get('real_2024', 0),
+        'lucro_bruto_atual': lucro_bruto.get('real_2025', 0),
+        'lucro_op_atual':    lucro_op.get('real_2025', 0),
+        'lucro_final_atual': lucro_final.get('real_2025', 0),
     }
 
     return {
-        'data_ref': data_ref,
-        'loja': loja_nome if pd.notna(loja_nome) else '',
-        'tipo_loja': tipo_loja,
-        'col_inicio': col_inicio,
-        'dados': dados,
+        'data_ref':    data_ref,
+        'loja':        loja_nome if pd.notna(loja_nome) else '',
+        'tipo_loja':   tipo_loja,
+        'col_inicio':  col_inicio,
+        'dados':       dados,
         'indicadores': indicadores,
-        'kpis': kpis,
-        'lojas': lojas
+        'kpis':        kpis,
+        'lojas':       lojas,
+        'ano_atual':   '2025',
+        'ano_anterior':'2024',
     }
 
 
@@ -423,7 +451,7 @@ def carregar_dre(excel_path, col_inicio=None):
 def index():
     try:
         periodo = request.args.get('periodo')
-        tipo = request.args.get('tipo', 'consolidado')
+        tipo    = request.args.get('tipo', 'consolidado')
         loja_id = request.args.get('loja')
 
         periodos = listar_periodos()
@@ -443,38 +471,38 @@ def index():
 
         if not excel_path:
             return render_template('index.html',
-                                 dre=None,
-                                 lojas={'varejo': [], 'atacado': [], 'todas': []},
-                                 periodos=periodos,
-                                 periodo_selecionado=periodo,
-                                 tipo_selecionado=tipo,
-                                 loja_selecionada=None,
-                                 erro="Nenhum arquivo DRE encontrado. Adicione arquivos nas pastas 'consolidado' ou 'parcial'.")
+                                   dre=None,
+                                   lojas={'varejo': [], 'atacado': [], 'todas': []},
+                                   periodos=periodos,
+                                   periodo_selecionado=periodo,
+                                   tipo_selecionado=tipo,
+                                   loja_selecionada=None,
+                                   erro="Nenhum arquivo DRE encontrado.")
 
         col_inicio = int(loja_id) if loja_id else None
-        dre_data = carregar_dre(excel_path, col_inicio)
+        dre_data   = carregar_dre(excel_path, col_inicio)
 
         if not dre_data:
             return render_template('index.html',
-                                 dre=None,
-                                 lojas={'varejo': [], 'atacado': [], 'todas': []},
-                                 periodos=periodos,
-                                 periodo_selecionado=periodo,
-                                 tipo_selecionado=tipo,
-                                 loja_selecionada=None,
-                                 erro="Erro ao carregar dados do DRE.")
+                                   dre=None,
+                                   lojas={'varejo': [], 'atacado': [], 'todas': []},
+                                   periodos=periodos,
+                                   periodo_selecionado=periodo,
+                                   tipo_selecionado=tipo,
+                                   loja_selecionada=None,
+                                   erro="Erro ao carregar dados do DRE.")
 
-        dre_data['periodo'] = periodo
+        dre_data['periodo']      = periodo
         dre_data['tipo_arquivo'] = tipo
 
         return render_template('index.html',
-                             dre=dre_data,
-                             lojas=dre_data['lojas'],
-                             periodos=periodos,
-                             periodo_selecionado=periodo,
-                             tipo_selecionado=tipo,
-                             loja_selecionada=loja_id,
-                             erro=None)
+                               dre=dre_data,
+                               lojas=dre_data['lojas'],
+                               periodos=periodos,
+                               periodo_selecionado=periodo,
+                               tipo_selecionado=tipo,
+                               loja_selecionada=loja_id,
+                               erro=None)
 
     except Exception as e:
         logging.error("ERRO NA ROTA /: %s", traceback.format_exc())
@@ -490,7 +518,7 @@ def api_periodos():
 @app.route('/api/dre')
 def api_dre():
     periodo = request.args.get('periodo')
-    tipo = request.args.get('tipo', 'consolidado')
+    tipo    = request.args.get('tipo', 'consolidado')
     loja_id = request.args.get('loja')
 
     excel_path = obter_arquivo(periodo, tipo)
@@ -498,10 +526,10 @@ def api_dre():
         return jsonify({'erro': 'Arquivo não encontrado'}), 404
 
     col_inicio = int(loja_id) if loja_id else None
-    dre_data = carregar_dre(excel_path, col_inicio)
+    dre_data   = carregar_dre(excel_path, col_inicio)
 
     if dre_data:
-        dre_data['periodo'] = periodo
+        dre_data['periodo']      = periodo
         dre_data['tipo_arquivo'] = tipo
 
     return jsonify(dre_data)
