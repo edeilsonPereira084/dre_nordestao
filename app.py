@@ -241,8 +241,48 @@ def obter_arquivo(periodo_label, tipo='consolidado'):
     return None
 
 
+# ── Ordem personalizada e grupos das lojas ──
+ORDEM_VAREJO = [
+    'LJ. ALECRIM',
+    'LJ. PETRÓPOLIS',
+    'LJ. IGAPÓ',
+    'LJ. LAGOA NOVA',
+    'LJ. TIROL',
+    'LJ. PONTA NEGRA',
+    'LJ. CIDADE JARDIM',
+    'LJ. NOVA PARNAMIRIM',
+    'LJ. SANTA CATARINA',
+]
+
+ORDEM_ATACADO = [
+    'SUPERFÁCIL EMAÚS',
+    'SUPERFÁCIL JOÃO PESSOA',
+    'SUPERFÁCIL RODOVIÁRIA',
+    'SUPERFÁCIL SGA',
+]
+
+LOJAS_MOSSORO = [
+    'LJ. ABOLIÇÃO IV',
+    'LJ. DOZE ANOS',
+    'SUPERFÁCIL ALTO SÃO MANOEL',
+    'SUPERFÁCIL NOVA BETANIA',
+]
+
+
+def _sort_lojas(lojas, ordem):
+    """Ordena lista de lojas pela ordem definida; lojas não listadas vão ao final."""
+    ordem_norm = [n.upper() for n in ordem]
+    def key(l):
+        nome_up = l['nome'].upper()
+        try:
+            return ordem_norm.index(nome_up)
+        except ValueError:
+            return len(ordem_norm)
+    return sorted(lojas, key=key)
+
+
 def listar_lojas(excel_path):
-    """Usa o Excel em cache para listar lojas."""
+    """Usa o Excel em cache para listar lojas com ordem e grupos personalizados."""
     df = ler_excel_cached(excel_path).copy()
 
     data_ref_raw = df.iloc[3, 3]
@@ -254,8 +294,11 @@ def listar_lojas(excel_path):
         data_ref = ''
 
     row_lojas = df.iloc[3]
-    lojas_varejo = []
+    lojas_varejo  = []
     lojas_atacado = []
+    lojas_mossoro = []
+
+    mossoro_norm = [n.upper() for n in LOJAS_MOSSORO]
 
     for col_idx, val in enumerate(row_lojas):
         if pd.notna(val) and isinstance(val, str):
@@ -269,15 +312,22 @@ def listar_lojas(excel_path):
                     'data_ref': data_ref,
                     'tipo': tipo
                 }
-                if tipo == 'varejo':
+                if val_clean.upper() in mossoro_norm:
+                    lojas_mossoro.append(loja)
+                elif tipo == 'varejo':
                     lojas_varejo.append(loja)
                 else:
                     lojas_atacado.append(loja)
 
+    varejo_ord  = _sort_lojas(lojas_varejo,  ORDEM_VAREJO)
+    atacado_ord = _sort_lojas(lojas_atacado, ORDEM_ATACADO)
+    mossoro_ord = _sort_lojas(lojas_mossoro, LOJAS_MOSSORO)
+
     return {
-        'varejo': sorted(lojas_varejo, key=lambda x: x['nome']),
-        'atacado': sorted(lojas_atacado, key=lambda x: x['nome']),
-        'todas': sorted(lojas_varejo + lojas_atacado, key=lambda x: x['nome']),
+        'varejo':  varejo_ord,
+        'atacado': atacado_ord,
+        'mossoro': mossoro_ord,
+        'todas':   varejo_ord + atacado_ord + mossoro_ord,
         'data_ref': data_ref
     }
 

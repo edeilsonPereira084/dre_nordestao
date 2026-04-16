@@ -890,6 +890,15 @@
                                 {% endfor %}
                             </optgroup>
                             {% endif %}
+                            {% if lojas.mossoro %}
+                            <optgroup label="🌵 MOSSORÓ">
+                                {% for loja in lojas.mossoro %}
+                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                    {{ loja.nome }}
+                                </option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endif %}
                         </select>
                     </div>
                     {% endif %}
@@ -1145,7 +1154,7 @@
 
         <footer class="footer">
             <div class="footer-tip">💡 Clique nas linhas com ▶ para expandir detalhes • Ctrl+E expandir tudo • Ctrl+R recolher</div>
-            <p>Grupo Nordestão — Operações e Vendas</p>
+            <p>Grupo Nordestão — Sistema de Gestão Financeira</p>
         </footer>
     </div>
 
