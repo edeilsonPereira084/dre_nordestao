@@ -823,7 +823,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="brand">
-                    <div class="brand-logo"><img src="static/logo.png" alt="Logo Nordestão"></div>
+                    <div class="brand-logo"><img id="brand-logo" src="static/logo.png" alt="Logo Nordestão"></div>
                     <div class="brand-info">
                         <h1>Grupo Nordestão</h1>
                         <p>Demonstração do Resultado do Exercício</p>
@@ -875,7 +875,7 @@
                             {% if lojas.varejo %}
                             <optgroup label="🛒 VAREJO - NORDESTÃO">
                                 {% for loja in lojas.varejo %}
-                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id or (not loja_selecionada and loop.first) %}selected{% endif %}>
+                                <option value="{{ loja.id }}" data-grupo="varejo" {% if loja_selecionada == loja.id or (not loja_selecionada and loop.first) %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -884,7 +884,7 @@
                             {% if lojas.atacado %}
                             <optgroup label="📦 ATACADO - SUPERFÁCIL">
                                 {% for loja in lojas.atacado %}
-                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                <option value="{{ loja.id }}" data-grupo="atacado" {% if loja_selecionada == loja.id %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -893,7 +893,7 @@
                             {% if lojas.mossoro %}
                             <optgroup label="🌵 MOSSORÓ">
                                 {% for loja in lojas.mossoro %}
-                                <option value="{{ loja.id }}" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                <option value="{{ loja.id }}" data-grupo="mossoro" {% if loja_selecionada == loja.id %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -1154,7 +1154,7 @@
 
         <footer class="footer">
             <div class="footer-tip">💡 Clique nas linhas com ▶ para expandir detalhes • Ctrl+E expandir tudo • Ctrl+R recolher</div>
-            <p>Grupo Nordestão — Sistema de Gestão Financeira</p>
+            <p>Grupo Nordestão — Operações e Vendas</p>
         </footer>
     </div>
 
@@ -1196,7 +1196,24 @@
             atualizarURL();
         }
 
+        // Mapa de logos por grupo
+        const LOGOS = {
+            'varejo':  'static/logo.png',
+            'atacado': 'static/facil.png',
+            'mossoro': 'static/mosso.png',
+        };
+
+        function atualizarLogo() {
+            const lojaSelect = document.getElementById('loja-select');
+            if (!lojaSelect) return;
+            const selectedOption = lojaSelect.options[lojaSelect.selectedIndex];
+            const grupo = selectedOption?.dataset?.grupo || 'varejo';
+            const logo = document.getElementById('brand-logo');
+            if (logo) logo.src = LOGOS[grupo] || 'static/logo.png';
+        }
+
         function mudarLoja() {
+            atualizarLogo();
             atualizarURL();
         }
 
@@ -1244,6 +1261,7 @@
 
         // Inicializar
         atualizarBotoesTipo();
+        atualizarLogo();
     </script>
 </body>
 </html>
