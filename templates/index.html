@@ -823,7 +823,15 @@
         <header class="header">
             <div class="header-top">
                 <div class="brand">
-                    <div class="brand-logo"><img id="brand-logo" src="static/logo.png" alt="Logo Nordestão"></div>
+                    <div class="brand-logo">
+                        {% if grupo_selecionado == 'atacado' or (dre and dre.tipo_loja == 'atacado' and not grupo_selecionado) %}
+                        <img id="brand-logo" src="static/facil.png" alt="Logo Superfácil">
+                        {% elif grupo_selecionado == 'mossoro' %}
+                        <img id="brand-logo" src="static/mosso.png" alt="Logo Mossoró">
+                        {% else %}
+                        <img id="brand-logo" src="static/logo.png" alt="Logo Nordestão">
+                        {% endif %}
+                    </div>
                     <div class="brand-info">
                         <h1>Grupo Nordestão</h1>
                         <p>Demonstração do Resultado do Exercício</p>
@@ -835,11 +843,10 @@
                     {% if periodos.todos %}
                     <div class="control-group">
                         <span class="control-label">📅 Período</span>
-                        <select id="periodo-select" class="control-select" onchange="mudarPeriodo()">
+                        <select id="periodo-select" class="control-select"
+                            onchange="if(this.value) window.location.href=this.value;">
                             {% for p in periodos.todos %}
-                            <option value="{{ p.label }}" 
-                                    data-tem-consolidado="{{ p.tem_consolidado|lower }}"
-                                    data-tem-parcial="{{ p.tem_parcial|lower }}"
+                            <option value="/?periodo={{ p.label }}&tipo=consolidado{% if grupo_selecionado %}&grupo={{ grupo_selecionado }}{% elif loja_selecionada %}&loja={{ loja_selecionada }}{% endif %}"
                                     {% if periodo_selecionado == p.label %}selected{% endif %}>
                                 {{ p.mes_nome }}/{{ p.ano }}
                             </option>
@@ -847,6 +854,9 @@
                         </select>
                     </div>
                     {% endif %}
+
+                    <!-- Campo hidden para preservar tipo na navegação -->
+                    <input type="hidden" id="tipo-hidden" value="{{ tipo_selecionado or 'consolidado' }}">
 
                     <!-- Toggle Consolidado/Parcial -->
                     <div class="control-group">
@@ -867,15 +877,24 @@
                         </div>
                     </div>
 
-                    <!-- Seletor de Loja -->
+                    <!-- Seletor de Unidade -->
                     {% if lojas.todas|length > 0 %}
+                    {% set p = periodo_selecionado or '' %}
                     <div class="control-group">
                         <span class="control-label">🏪 Unidade</span>
-                        <select id="loja-select" class="control-select" onchange="mudarLoja()">
+                        <select id="loja-select" class="control-select"
+                            onchange="window.location.href=this.value">
                             {% if lojas.varejo %}
                             <optgroup label="🛒 VAREJO - NORDESTÃO">
+                                <option value="/?periodo={{ p }}&tipo=consolidado&grupo=varejo"
+                                    data-grupo="varejo"
+                                    {% if grupo_selecionado == 'varejo' %}selected{% endif %}>
+                                    DRE VAREJO
+                                </option>
                                 {% for loja in lojas.varejo %}
-                                <option value="{{ loja.id }}" data-grupo="varejo" {% if loja_selecionada == loja.id or (not loja_selecionada and loop.first) %}selected{% endif %}>
+                                <option value="/?periodo={{ p }}&tipo=consolidado&loja={{ loja.id }}"
+                                    data-grupo="varejo"
+                                    {% if loja_selecionada == loja.id or (not loja_selecionada and not grupo_selecionado and loop.first) %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -883,8 +902,15 @@
                             {% endif %}
                             {% if lojas.atacado %}
                             <optgroup label="📦 ATACADO - SUPERFÁCIL">
+                                <option value="/?periodo={{ p }}&tipo=consolidado&grupo=atacado"
+                                    data-grupo="atacado"
+                                    {% if grupo_selecionado == 'atacado' %}selected{% endif %}>
+                                    DRE ATACADO
+                                </option>
                                 {% for loja in lojas.atacado %}
-                                <option value="{{ loja.id }}" data-grupo="atacado" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                <option value="/?periodo={{ p }}&tipo=consolidado&loja={{ loja.id }}"
+                                    data-grupo="atacado"
+                                    {% if loja_selecionada == loja.id %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -892,8 +918,15 @@
                             {% endif %}
                             {% if lojas.mossoro %}
                             <optgroup label="🌵 MOSSORÓ">
+                                <option value="/?periodo={{ p }}&tipo=consolidado&grupo=mossoro"
+                                    data-grupo="mossoro"
+                                    {% if grupo_selecionado == 'mossoro' %}selected{% endif %}>
+                                    DRE MOSSORÓ
+                                </option>
                                 {% for loja in lojas.mossoro %}
-                                <option value="{{ loja.id }}" data-grupo="mossoro" {% if loja_selecionada == loja.id %}selected{% endif %}>
+                                <option value="/?periodo={{ p }}&tipo=consolidado&loja={{ loja.id }}"
+                                    data-grupo="mossoro"
+                                    {% if loja_selecionada == loja.id %}selected{% endif %}>
                                     {{ loja.nome }}
                                 </option>
                                 {% endfor %}
@@ -1154,7 +1187,7 @@
 
         <footer class="footer">
             <div class="footer-tip">💡 Clique nas linhas com ▶ para expandir detalhes • Ctrl+E expandir tudo • Ctrl+R recolher</div>
-            <p>Grupo Nordestão — Operações e Vendas</p>
+            <p>Grupo Nordestão — Sistema de Gestão Financeira</p>
         </footer>
     </div>
 
@@ -1183,52 +1216,45 @@
         function mudarTipo(tipo) {
             const btnConsolidado = document.getElementById('btn-consolidado');
             const btnParcial = document.getElementById('btn-parcial');
-            
+
             btnConsolidado.classList.remove('active');
             btnParcial.classList.remove('active', 'parcial-active');
-            
+
             if (tipo === 'consolidado') {
                 btnConsolidado.classList.add('active');
             } else {
                 btnParcial.classList.add('active', 'parcial-active');
             }
-            
+
+            // Atualiza o campo hidden para refletir o tipo escolhido
+            document.getElementById('tipo-hidden').value = tipo;
+
             atualizarURL();
         }
 
-        // Mapa de logos por grupo
-        const LOGOS = {
-            'varejo':  'static/logo.png',
-            'atacado': 'static/facil.png',
-            'mossoro': 'static/mosso.png',
-        };
-
-        function atualizarLogo() {
-            const lojaSelect = document.getElementById('loja-select');
-            if (!lojaSelect) return;
-            const selectedOption = lojaSelect.options[lojaSelect.selectedIndex];
-            const grupo = selectedOption?.dataset?.grupo || 'varejo';
-            const logo = document.getElementById('brand-logo');
-            if (logo) logo.src = LOGOS[grupo] || 'static/logo.png';
+        // Navega diretamente para a URL embutida no data-url da option selecionada
+        function navegarParaUnidade(sel) {
+            const opt = sel.options[sel.selectedIndex];
+            const url = opt.dataset.url;
+            if (url) {
+                atualizarLogo();
+                window.location.href = url;
+            }
         }
 
-        function mudarLoja() {
-            atualizarLogo();
-            atualizarURL();
-        }
-
-        function atualizarURL() {
+        function atualizarURL(tipoForcar) {
             const periodo = document.getElementById('periodo-select')?.value || '';
-            const loja = document.getElementById('loja-select')?.value || '';
-            const btnParcial = document.getElementById('btn-parcial');
-            const tipo = btnParcial?.classList.contains('active') ? 'parcial' : 'consolidado';
-            
-            let url = '/?';
-            if (periodo) url += `periodo=${encodeURIComponent(periodo)}&`;
-            url += `tipo=${tipo}&`;
-            if (loja) url += `loja=${encodeURIComponent(loja)}`;
-            
-            window.location.href = url;
+            const tipo = tipoForcar || document.getElementById('tipo-hidden')?.value || 'consolidado';
+            // Lê a URL do data-url da option selecionada e substitui o tipo
+            const sel = document.getElementById('loja-select');
+            const opt = sel?.options[sel.selectedIndex];
+            if (opt?.dataset?.url) {
+                let url = opt.dataset.url.replace(/tipo=[^&]+/, `tipo=${tipo}`);
+                window.location.href = url;
+            } else {
+                let url = `/?periodo=${encodeURIComponent(periodo)}&tipo=${tipo}`;
+                window.location.href = url;
+            }
         }
 
         // Expandir/Recolher tabela
@@ -1261,7 +1287,6 @@
 
         // Inicializar
         atualizarBotoesTipo();
-        atualizarLogo();
     </script>
 </body>
 </html>

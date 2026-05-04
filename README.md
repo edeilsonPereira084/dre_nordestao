@@ -64,3 +64,7 @@ Acesse: `http://localhost:5000`
 ---
 
 Grupo Nordestão — Sistema de Gestão Financeira
+
+git add "informar o nome do arquivo"
+git commit -m "assunto do commit"
+git push
