@@ -61,3 +61,17 @@ There are no tests in this project.
 ## Adding New Periods
 
 Drop a new `.xlsx` file in `consolidado/` following the naming pattern `DRE_LOJAS_MÊSANO.xlsx`. The file must have a sheet named `'DRE'` with store names in row 3. The app auto-discovers files on startup (cache cleared on restart).
+
+## GitHub Sync (Auto-update)
+
+The repository is at `https://github.com/edeilsonPereira084/dre_nordestao` (branch `main`).
+
+A Claude Code Stop hook in [.claude/settings.json](.claude/settings.json) automatically commits and pushes any file changes to GitHub at the end of each Claude Code session. The hook runs:
+
+```bash
+git add -A
+git commit -m "auto-update: changes via Claude Code"
+git push origin main
+```
+
+This means: after every Claude Code task that modifies files, changes are pushed to GitHub automatically — no manual `git push` needed.

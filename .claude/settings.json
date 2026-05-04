@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "changes=$(git diff --cached --name-only); git add -A; changes=$(git diff --cached --name-only); if [ -n \"$changes\" ]; then git commit -m \"auto-update: changes via Claude Code\" && git push origin main; fi",
+            "timeout": 60,
+            "statusMessage": "Sincronizando alterações com o GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
